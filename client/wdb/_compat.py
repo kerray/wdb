@@ -2,6 +2,8 @@ import sys
 
 python_version = sys.version_info[0]
 
+def running_ironpython():
+    return sys.platform == "cli"
 
 try:
     from json import loads, dumps, JSONEncoder
@@ -98,7 +100,7 @@ def is_str(string):
 
 
 def u(s):
-    if python_version == 2:
+    if python_version == 2 and not running_ironpython():
         return s.decode('utf-8')
     return s
 

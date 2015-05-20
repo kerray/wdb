@@ -19,7 +19,7 @@ __version__ = '2.1.1'
 _initial_globals = dict(globals())
 
 from ._compat import (
-    execute, StringIO, to_unicode_string, escape, loads, Socket)
+    execute, StringIO, to_unicode_string, escape, loads, Socket, running_ironpython)
 
 from .breakpoint import (
     Breakpoint, LineBreakpoint,
@@ -604,7 +604,10 @@ class Wdb(object):
                 line = self.compile_cache.get(id(code), '')
             line = to_unicode_string(line, filename)
             line = line and line.strip()
-            startlnos = dis.findlinestarts(code)
+            startlnos = ((0, 0), (0, 0))
+            if not running_ironpython(): # IronPython doesn't support dis.findlinestarts()
+                startlnos = dis.findlinestarts(code)
+                
             lastlineno = list(startlnos)[-1][1]
             if frame == stack_frame:
                 current = i
